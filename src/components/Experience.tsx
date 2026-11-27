@@ -1,94 +1,61 @@
 "use client";
 
-import { education, experience } from "@/lib/content";
+import { motion, useReducedMotion } from "framer-motion";
+import { experience } from "@/lib/content";
 import { Reveal } from "./Reveal";
 
 export function Experience() {
+  const reduce = useReducedMotion();
+
   return (
-    <section id="experience" className="pb-8 md:pb-12">
-      <div className="container-site">
-        <Reveal>
-          <div className="flex items-center gap-4">
-            <span className="label-mono text-accent">§02 Revision log</span>
-            <span className="h-px flex-1 max-w-[60%] bg-line" />
-          </div>
-          <h2 className="mt-4 font-display text-[clamp(2.75rem,8vw,6.5rem)] leading-[0.92] tracking-[var(--tracking-display)]">
-            Experience<span className="text-accent">.</span>
-          </h2>
-        </Reveal>
+    <section id="experience" className="pb-16 md:pb-20">
+      <Reveal>
+        <p className="label-mono text-accent">02 — Experience</p>
+        <h2 className="section-title mt-3">Where I&apos;ve worked</h2>
+      </Reveal>
 
-        <Reveal className="mt-10">
-          <div className="mb-4 hidden grid-cols-[180px_minmax(0,1fr)_minmax(0,1.1fr)] gap-6 label-mono text-faint md:grid">
-            <span>Rev · Date</span>
-            <span>Role</span>
-            <span>Notes</span>
-          </div>
-
-          <ol className="relative space-y-0">
-            <span
-              className="pointer-events-none absolute top-3 bottom-3 left-[5px] w-px bg-line md:left-[7px]"
-              aria-hidden
-            />
-            {experience.map((job) => (
-              <li
-                key={job.rev}
-                className="relative grid gap-4 border-t border-line py-8 md:grid-cols-[180px_minmax(0,1fr)_minmax(0,1.1fr)] md:gap-6"
-              >
-                <span
-                  className="absolute top-10 left-0 size-2.5 rotate-45 border border-accent bg-bg md:top-11"
-                  aria-hidden
-                />
-                <div className="pl-8 md:pl-10">
-                  <p className="label-mono text-accent">Rev {job.rev}</p>
-                  <p className="mt-1 font-display text-3xl tracking-tight whitespace-nowrap md:text-[2.5rem]">
-                    {job.date}
-                  </p>
-                  <p className="mt-1 label-mono text-faint">{job.range}</p>
-                </div>
-                <div className="pl-8 md:pl-0">
-                  <h3 className="font-display text-xl tracking-tight md:text-2xl">
+      <ol className="mt-10 space-y-0">
+        {experience.map((job, index) => (
+          <Reveal key={`${job.company}-${job.range}`} delay={index * 0.05}>
+            <li className="group relative border-t border-line py-8 last:border-b">
+              <div className="grid gap-4 md:grid-cols-[9.5rem_1fr] md:gap-8">
+                <p className="label-mono pt-1 text-faint">{job.range}</p>
+                <div>
+                  <h3 className="text-lg font-medium text-ink sm:text-xl">
                     {job.role}
                   </h3>
-                  <p className="mt-1 font-mono text-[13px] text-accent">
+                  <p className="mt-1 text-[15px] text-accent">
                     {job.company}
+                    <span className="text-faint"> · {job.location}</span>
                   </p>
-                  <p className="mt-1 label-mono text-faint">{job.location}</p>
+                  <ul className="mt-4 space-y-2.5">
+                    {job.bullets.map((bullet, i) => (
+                      <motion.li
+                        key={bullet}
+                        className="flex gap-3 text-[15px] leading-relaxed text-muted"
+                        initial={reduce ? false : { opacity: 0, x: 8 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, margin: "-5% 0px" }}
+                        transition={{
+                          delay: 0.08 + i * 0.06,
+                          duration: 0.4,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
+                      >
+                        <span
+                          className="mt-2 size-1 shrink-0 rounded-full bg-accent/80"
+                          aria-hidden
+                        />
+                        <span>{bullet}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
                 </div>
-                <p className="pl-8 text-[15px] leading-relaxed text-muted md:pl-0">
-                  {job.notes}
-                </p>
-              </li>
-            ))}
-
-            <li className="relative grid gap-4 border-t border-line py-8 md:grid-cols-[180px_minmax(0,1fr)_minmax(0,1.1fr)] md:gap-6">
-              <span
-                className="absolute top-10 left-0 size-2.5 rotate-45 border border-accent bg-bg"
-                aria-hidden
-              />
-              <div className="pl-8 md:pl-10">
-                <p className="label-mono text-accent">Education</p>
-                <p className="mt-1 font-display text-2xl tracking-tight md:text-3xl">
-                  {education.range.slice(0, 4)}–{education.range.slice(-4)}
-                </p>
               </div>
-              <div className="pl-8 md:pl-0">
-                <h3 className="font-display text-xl tracking-tight md:text-2xl">
-                  {education.degree}
-                </h3>
-                <p className="mt-1 font-mono text-[13px] text-accent">
-                  {education.school}
-                </p>
-                <p className="mt-1 label-mono text-faint">
-                  {education.location} · {education.range}
-                </p>
-              </div>
-              <p className="pl-8 text-[15px] leading-relaxed text-muted md:pl-0">
-                {education.degree} · {education.school}
-              </p>
             </li>
-          </ol>
-        </Reveal>
-      </div>
+          </Reveal>
+        ))}
+      </ol>
     </section>
   );
 }
